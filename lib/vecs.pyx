@@ -9,6 +9,8 @@ cdef double angle_between(np.ndarray[double, ndim=1] v1,
                           np.ndarray[double, ndim=1] v2):
     return acos(dot(v1, v2) / (norm(v1)*norm(v2)))
 
+def py_angle_between(v1, v2):
+    return angle_between(v1, v2)
 
 cdef double dot(np.ndarray[double, ndim=1] v1,
                 np.ndarray[double, ndim=1] v2):
@@ -93,6 +95,7 @@ def vector(x=0.0, y=0.0, z=0.0):
     return c_vector(x, y, z)
 
 
+"""
 cdef np.ndarray[double, ndim=1] line_plane_intersection(np.ndarray[double, ndim=1] p0,
                                                         np.ndarray[double, ndim=1] l,
                                                         np.ndarray[double, ndim=1] l0,
@@ -106,3 +109,4 @@ cdef np.ndarray[double, ndim=1] line_plane_intersection(np.ndarray[double, ndim=
 
     if denominator != 0:
         # one intersection point
+"""

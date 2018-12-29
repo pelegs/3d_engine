@@ -1,5 +1,6 @@
 import numpy as np
 from vecs import *
+from pygame_colors import WHITE
 
 
 class camera:
@@ -15,13 +16,12 @@ class camera:
         self.normal = normalize(dir)
         self.screen_center = vec_add(self.pos, self.normal)
 
-    def calc_screen_pos(self, p):
-        connecting_line = vec_sub(p.pos, self.pos)
-        direction = normalize(connecting_line)
-        d = (self.screen_center - p.pos) / dot(
 
 class point:
     def __init__(self,
                  pos,
                  color=WHITE,
-                 radius=1)
+                 radius=1):
+        self.pos = pos
+        self.color = color
+        self.radius = radius
