@@ -91,3 +91,18 @@ cdef np.ndarray[double, ndim=1] c_vector(double x, double y, double z):
 
 def vector(x=0.0, y=0.0, z=0.0):
     return c_vector(x, y, z)
+
+
+cdef np.ndarray[double, ndim=1] line_plane_intersection(np.ndarray[double, ndim=1] p0,
+                                                        np.ndarray[double, ndim=1] l,
+                                                        np.ndarray[double, ndim=1] l0,
+                                                        np.ndarray[double, ndim=1] n):
+    cdef double numerator
+    cdef double denominator
+    cdef np.ndarray[double, ndim=1] diff = vec_sub(p0, l0)
+
+    numerator = dot(diff, n)
+    denominator = dot(l, n)
+
+    if denominator != 0:
+        # one intersection point
