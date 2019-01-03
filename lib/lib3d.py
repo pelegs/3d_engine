@@ -8,70 +8,32 @@ from pygame_colors import WHITE
 Mathematical functions
 """
 
-def normalize(vec):
-    L = np.linalg.norm(vec)
-    if L == 0:
-        raise ValueError('can not normalize the zero-vector!')
+def vector(args=[]):
+    """
+    Returns a 4-vector (x, y, z, 1)
+    from a 3-tuple (x, y, z)
+    """
+    if len(args) > 3:
+        raise ValueError('Max 3 elements allowed!')
     else:
-        return vec / L
-
-def distance2(v1, v2):
-    return np.linalg.norm(v1-v2)
-
-def distance(v1, v2):
-    return np.sqrt(distance2(v1, v2))
-
-def vector(x, y, z):
-    return np.array([x, y, z])
-
-def line_plane_intersection(p0, l, l0, n):
-    numerator = np.dot((p0-l0), n)
-    denominator = np.dot(l, n)
-    if denominator == 0:
-        return False
-    else:
-        d = numerator / denominator
-        return l0 + d*l
-
+        rest = [0] * (3-len(args))
+    return np.hstack((args, rest, 1))
 
 ##### Classes #####
 
-class camera:
-    def __init__(self,
-                 pos=np.zeros(3),
-                 dir=vector(1, 1, -2),
-                 sw=500,
-                 sh=500):
-        self.pos = pos
-        self.dir = dir
-        self.sw = sw
-        self.sh = sh
-        self.normal = normalize(dir)
-        self.screen_center = self.pos - self.dir
-        self.points_on_screen = []
+class coordinate_system:
+    """
+    Represents a coordinate system
+    """
+    def __init__(self, pos, dir):
+        pass
 
-    def reset_points_on_screen(self):
-        self.points_on_screen = []
+##### Tests? #####
 
-    def get_screen_position(self, p):
-        l = normalize(self.pos - p.pos)
-        new_point = line_plane_intersection(self.screen_center,
-                                            l, p.pos, self.normal)
-        self.points_on_screen.append(new_point)
+v1 = vector([1, 2, 3])
+v2 = vector([2, 3])
+v3 = vector([1])
+v4 = vector()
 
-    def print_points_on_screen(self):
-        for p in self.points_on_screen:
-            print(' '.join(map(str, p)), 1)
-
-
-class point:
-    def __init__(self,
-                 pos,
-                 color=WHITE,
-                 radius=1):
-        self.pos = pos
-        self.color = color
-        self.radius = radius
-
-    def print_data(self):
-        print(' '.join(map(str, self.pos)), 0)
+for v in [v1, v2, v3, v4]:
+    print(type(v), v)
