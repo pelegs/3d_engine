@@ -49,10 +49,11 @@ class coordinate_system:
         zeros = np.zeros(shape=(3,4))
         self.transformation_matrix = zeros
         self.transformation_matrix[:,:-1] = rotation_block
-
         # Translation row
         position = vector(pos, 1)
         self.transformation_matrix = np.vstack((self.transformation_matrix, position))
+        # Inverse matrix
+        self.transformation_matrix_inv = np.linalg.inv(self.transformation_matrix)
 
 
 ##### Tests? #####
@@ -65,5 +66,5 @@ v4 = vector([])
 for v in [v1, v2, v3, v4]:
     print(type(v), v)
 
-coord = coordinate_system(5, 0, 0, [1, 3, 3])
-print(coord.transformation_matrix)
+coord = coordinate_system(5, 0, 0, np.random.uniform(-10, 10, size=3))
+print(np.dot(coord.transformation_matrix, coord.transformation_matrix_inv))
