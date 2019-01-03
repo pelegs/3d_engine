@@ -1,18 +1,41 @@
 #!/usr/bin/env python3
 
-import numpy as np
+import pygame
 import sys
 sys.path.append('lib')
 from lib3d import *
 
-N = 10
-ps = [point(pos=np.random.uniform(-10, 10, 3) - vector(10,0,0))
-      for _ in range(N)]
-cam = camera(pos=vector(30,0,0))
 
-for p in ps:
-    cam.get_screen_position(p)
-    cam.rotate_screen_to_z()
-    #p.print_data()
-#cam.print_points_on_screen()
-print(' '.join(map(str, cam.pos)), 2)
+WIDTH = 640
+HEIGHT = 480
+FPS = 30
+
+# Inititialize 3d stuff
+world_coord = coordinate_system()
+cam = camera([0, 0, 5])
+points = [object(world_coord, [i, j, k])
+          for i in range(2)
+          for j in range(2)
+          for k in range(2)]
+
+for i, p in enumerate(points):
+    cam.add_object(p)
+
+cam.draw_object(screen=1)
+sys.exit()
+# Inititialize pygame and create a window
+pygame.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption('Title')
+clock = pygame.time.clock()
+
+# Game loop
+running = True
+while running:
+    # Inputs
+    # Screen update
+    # Draw / Render
+    screen.fill(color)
+
+    # Flip display (after drawing everything)
+    pygame.display.flip()

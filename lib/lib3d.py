@@ -19,6 +19,7 @@ def vector(args=[], last=0):
         rest = [0] * (3-len(args))
     return np.hstack((args, rest, last))
 
+
 def rotation_matrix(a=0, b=0, c=0):
     ca, sa = np.cos(a), np.sin(a)
     cb, sb = np.cos(b), np.sin(b)
@@ -39,11 +40,11 @@ def rotation_matrix(a=0, b=0, c=0):
 
 class coordinate_system:
     """
-    Represents a coordinate system
+    Represents a coordinate system.
     """
     def __init__(self,
-                 a=0, b=0, c=0,
-                 pos=[0, 0, 0]):
+                 pos=[0, 0, 0],
+                 a=0, b=0, c=0):
         # Rotation block
         rotation_block = rotation_matrix(a, b, c)
         zeros = np.zeros(shape=(3,4))
@@ -56,15 +57,51 @@ class coordinate_system:
         self.transformation_matrix_inv = np.linalg.inv(self.transformation_matrix)
 
 
+class object:
+    """
+    (at the moment only a point with a position
+    and rotation values)
+    """
+    def __init__(self,
+                 coord_sys,
+                 pos=[0, 0, 0],
+                 color=WHITE):
+        self.coord_sys = coord_sys
+        self.pos = vector(pos, 1)
+        self.color = color
+
+
+class camera:
+    """
+    A cemara.
+    """
+    def __init__(self,
+                 pos=[0, 0, 0],
+                 a=0, b=0, c=0,
+                 sW=640, sH=480):
+        self.coord_sys = coordinate_system(pos=pos,
+                                           a=a, b=b, c=c)
+        self.sW = sW
+        self.sH = sH
+        self.objects = []
+
+    def reset_objects(self):
+        self.objects = []
+
+    def add_object(self, obj):
+        self.objects.append(obj)
+
+    def draw_object(self, screen):
+        for obj in self.objects:
+            # NOTE: Should first transform using own coords,
+            # at the moment only world coordinate system exists
+            pos_cam = np.dot(obj.pos, self.coord_sys.transformation_matrix)
+            if pos_cam[2] != 0:
+                screen_x = int(-1 * (pos_cam[0] / pos_cam[2]) * self.sW) + self.sW // 2
+                screen_y = int(-1 * (pos_cam[1] / pos_cam[2]) * self.sH) + self.sH // 2
+                pos_screen = (screen_x, screen_y)
+                print(pos_screen)
+
+
 ##### Tests? #####
 
-v1 = vector([1, 2, 3], 0)
-v2 = vector([2, 3], 1)
-v3 = vector([1])
-v4 = vector([])
-
-for v in [v1, v2, v3, v4]:
-    print(type(v), v)
-
-coord = coordinate_system(5, 0, 0, np.random.uniform(-10, 10, size=3))
-print(np.dot(coord.transformation_matrix, coord.transformation_matrix_inv))
