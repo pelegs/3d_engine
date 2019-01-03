@@ -40,6 +40,10 @@ def rotation_matrix(a=0, b=0, c=0):
     return np.dot(rot_z, np.dot(rot_y, rot_x))
 
 
+def dim_color(color, distance):
+    new_color = np.array(color)
+    return color * 10 / distance
+
 ##### Classes #####
 
 class coordinate_system:
@@ -71,9 +75,11 @@ class object:
     def __init__(self,
                  coord_sys,
                  pos=[0, 0, 0],
+                 rad=1,
                  color=WHITE):
         self.coord_sys = coord_sys
         self.pos = vector(pos, 1)
+        self.rad = rad
         self.color = color
         self.neighbors = []
 
@@ -116,12 +122,18 @@ class camera:
         # NOTE: Should first transform using own coords,
         # at the moment only world coordinate system exists
         pos_cam = np.dot(obj.pos, self.coord_sys.transformation_matrix)
-        if pos_cam[2] != 0:
+        if pos_cam[2] > 0:
             # Draw points
             screen_x = int(-1 * (pos_cam[0] / pos_cam[2]) * self.sW) + self.sW // 2
             screen_y = int(-1 * (pos_cam[1] / pos_cam[2]) * self.sH) + self.sH // 2
             pos_screen = (screen_x, screen_y)
-            pygame.draw.circle(self.screen, obj.color, pos_screen, 3)
+
+            # Calculate visible radius
+            vis_rad = int(obj.rad * 10/pos_cam[2])
+            pygame.draw.circle(self.screen, obj.color, pos_screen, vis_rad)
+
+            # Dim color
+            vis_color = dim_color(obj.color, pos_cam[2])
 
             # Draw lines
             for neighbor in obj.neighbors:
@@ -129,7 +141,7 @@ class camera:
                 screen_x2 = int(-1 * (pos_cam2[0] / pos_cam2[2]) * self.sW) + self.sW // 2
                 screen_y2 = int(-1 * (pos_cam2[1] / pos_cam2[2]) * self.sH) + self.sH // 2
                 pos_screen2 = (screen_x2, screen_y2)
-                pygame.draw.line(self.screen, obj.color, pos_screen, pos_screen2, 2)
+                pygame.draw.line(self.screen, vis_color, pos_screen, pos_screen2, 2)
 
     def draw_all_objects(self):
         for obj in self.objects:
